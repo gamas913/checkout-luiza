@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Diário – Luiza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1B2130">
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="hero-kicker">CHECKOUT DIÁRIO</span>
+    <h1>📋 Fechamento do dia</h1>
+    <div class="hero-meta">
+      <span class="hero-name">Luiza</span>
+      <span class="hero-dot">·</span>
+      <span class="hero-date" id="hero-date-display"></span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button type="button" class="tab-btn active" data-tab="form">Novo checkout</button>
+  <button type="button" class="tab-btn" data-tab="history">Histórico</button>
+</nav>
+
+<div class="wrap">
+
+  <!-- ===================== FORM VIEW ===================== -->
+  <div id="view-form" class="view">
+    <div class="card storage-note">
+      <h2><span class="step">00</span> Seus dados</h2>
+      <p class="hint">Os dados ficam salvos neste aparelho. Faça um backup periódico para não perder o histórico.</p>
+      <div class="backup-actions">
+        <button type="button" class="btn-add" id="export-backup">Baixar backup completo</button>
+        <label class="btn-add file-btn">Restaurar backup<input type="file" id="import-backup" accept="application/json" hidden></label>
+      </div>
+      <span class="load-status" id="backup-status"></span>
+    </div>
+
+    <div class="card date-card">
+      <label for="entry-date">Data</label>
+      <input type="date" id="entry-date">
+      <span class="load-status" id="load-status"></span>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">01</span> Planejamento × Realidade</h2>
+      <div class="row-2">
+        <div class="field">
+          <label for="hours-planned">Horas que eu pretendia trabalhar hoje</label>
+          <input type="number" id="hours-planned" min="0" step="0.5" placeholder="8">
+        </div>
+        <div class="field">
+          <label for="hours-actual">Horas que realmente trabalhei</label>
+          <input type="number" id="hours-actual" min="0" step="0.5" placeholder="6.5">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">02</span> Em quais projetos trabalhei?</h2>
+      <datalist id="project-suggestions"></datalist>
+      <div class="projects-list" id="projects-list"></div>
+      <button type="button" class="btn-add" id="add-project">+ Adicionar projeto</button>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">03</span> Tarefa mais evitada hoje</h2>
+      <div class="field">
+        <textarea id="avoided-task" rows="2" placeholder="Qual tarefa você mais estava evitando?"></textarea>
+      </div>
+
+      <label class="sub-label">Consegui começar essa tarefa?</label>
+      <div class="choice-row" id="avoided-started">
+        <button type="button" class="choice-btn" data-value="sim">Sim</button>
+        <button type="button" class="choice-btn" data-value="nao">Não</button>
+      </div>
+      <div class="conditional" id="avoided-time-wrap" hidden>
+        <div class="field">
+          <label for="avoided-time">Por quanto tempo trabalhei nela?</label>
+          <input type="text" id="avoided-time" placeholder="Ex: 45 minutos">
+        </div>
+      </div>
+
+      <label class="sub-label">O que tornou essa tarefa difícil de começar?</label>
+      <div class="checkbox-grid" id="avoided-reasons">
+        <label class="checkbox-item"><input type="checkbox" value="grande"> Parecia muito grande</label>
+        <label class="checkbox-item"><input type="checkbox" value="por_onde"> Não sabia por onde começar</label>
+        <label class="checkbox-item"><input type="checkbox" value="cansada"> Estava cansada</label>
+        <label class="checkbox-item"><input type="checkbox" value="distraiu"> Me distraí facilmente</label>
+        <label class="checkbox-item"><input type="checkbox" value="esperando"> Esperando alguém responder</label>
+        <label class="checkbox-item"><input type="checkbox" value="perfeccionismo"> Perfeccionismo</label>
+        <label class="checkbox-item"><input type="checkbox" value="outro" data-other-toggle="avoided"> Outro</label>
+      </div>
+      <input type="text" class="other-input" id="avoided-other" placeholder="Descreva o outro motivo..." hidden>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">04</span> O que me atrapalhou hoje?</h2>
+      <div class="checkbox-grid" id="distractions">
+        <label class="checkbox-item"><input type="checkbox" value="instagram"> Instagram / Redes sociais</label>
+        <label class="checkbox-item"><input type="checkbox" value="celular"> Celular</label>
+        <label class="checkbox-item"><input type="checkbox" value="conversas"> Conversas</label>
+        <label class="checkbox-item"><input type="checkbox" value="mudanca"> Mudança constante entre tarefas</label>
+        <label class="checkbox-item"><input type="checkbox" value="cliente"> Cliente</label>
+        <label class="checkbox-item"><input type="checkbox" value="planejamento"> Falta de planejamento</label>
+        <label class="checkbox-item"><input type="checkbox" value="cansaco"> Cansaço</label>
+        <label class="checkbox-item"><input type="checkbox" value="outro" data-other-toggle="distractions"> Outro</label>
+      </div>
+      <input type="text" class="other-input" id="distractions-other" placeholder="Descreva o outro motivo..." hidden>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">05</span> O que foi entregue hoje?</h2>
+      <div class="field">
+        <textarea id="delivered" rows="3" placeholder="O que efetivamente saiu da sua mão hoje?"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">06</span> Existe algum projeto parado?</h2>
+      <div class="choice-row" id="stalled-project">
+        <button type="button" class="choice-btn" data-value="nao">Não</button>
+        <button type="button" class="choice-btn" data-value="sim">Sim</button>
+      </div>
+      <div class="conditional" id="stalled-fields" hidden>
+        <div class="field">
+          <label for="stalled-name">Projeto</label>
+          <input type="text" id="stalled-name" placeholder="Nome do projeto">
+        </div>
+        <div class="field">
+          <label for="stalled-days">Há quantos dias sem avanço?</label>
+          <input type="number" id="stalled-days" min="0" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="stalled-reason">Por quê?</label>
+          <textarea id="stalled-reason" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">07</span> Prioridade absoluta de amanhã</h2>
+      <p class="hint">Se amanhã eu só pudesse concluir UMA coisa, seria:</p>
+      <div class="field">
+        <textarea id="tomorrow-priority" rows="2"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">08</span> Reflexão do dia</h2>
+      <p class="hint">Se eu repetisse exatamente este dia durante um mês inteiro...</p>
+      <div class="radio-stack" id="reflection-scale">
+        <button type="button" class="radio-btn" data-value="muito_satisfeita">Eu ficaria muito satisfeita.</button>
+        <button type="button" class="radio-btn" data-value="satisfeita">Eu ficaria satisfeita.</button>
+        <button type="button" class="radio-btn" data-value="mudar">Eu precisaria mudar algumas coisas.</button>
+        <button type="button" class="radio-btn" data-value="problema">Eu teria um problema sério.</button>
+      </div>
+
+      <label class="sub-label">Nota do dia (0 a 10)</label>
+      <div class="rating-row" id="day-rating"></div>
+
+      <div class="field">
+        <label for="small-win">Uma pequena vitória de hoje</label>
+        <textarea id="small-win" rows="2"></textarea>
+      </div>
+      <div class="field">
+        <label for="improvement">Uma melhoria para amanhã</label>
+        <textarea id="improvement" rows="2"></textarea>
+      </div>
+    </div>
+
+    <button type="button" id="save-btn" class="btn-save">Salvar checkout de hoje</button>
+    <div class="save-msg" id="save-msg"></div>
+  </div>
+
+  <!-- ===================== HISTORY VIEW ===================== -->
+  <div id="view-history" class="view" hidden>
+    <div class="card stats-card" id="stats-summary"></div>
+    <div class="backup-actions"><button type="button" id="export-json" class="btn-add">Exportar histórico</button><button type="button" id="clear-all" class="btn-danger">Apagar todos os dados</button></div><div id="history-list"></div>
+  </div>
+
+</div>
+
+<script src="assets/js/app.js" defer></script>
+</body>
+</html>

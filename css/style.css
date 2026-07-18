@@ -1,24 +1,41 @@
 :root{
-    --primary:#5299D3;
-    --primary-dark:#3E84BD;
+  --dusk-900:#001021;
+  --dusk-800:#0A2942;
+  --dusk-700:#123B5A;
 
-    --danger:#BA2D0B;
+  --paper:#F2EFEA;
+  --paper-dim:#E9E5DF;
 
-    --background:#001021;
+  --ink:#001021;
+  --ink-soft:#5A6872;
+  --ink-faint:#8A959E;
 
-    --surface:#F2EFEA;
-    --surface-2:#E9E5DF;
+  --line:#D9D5CF;
 
-    --text:#001021;
-    --text-light:#5A6872;
+  --lamp:#5299D3;
+  --lamp-deep:#3E84BD;
+  --lamp-glow:rgba(82,153,211,.30);
 
-    --border:#D9D5CF;
+  --sage:#3B7A57;
+  --sage-bg:#E7F0E9;
 
-    --shadow:0 10px 25px rgba(0,16,33,.15);
+  --wine:#BA2D0B;
+  --wine-bg:#F7E4DF;
 
-    --radius-lg:16px;
-    --radius-md:12px;
-    --radius-sm:8px;
+  --primary:#5299D3;
+  --primary-dark:#3E84BD;
+  --danger:#BA2D0B;
+  --background:#001021;
+  --surface:#F2EFEA;
+  --surface-2:#E9E5DF;
+  --text:#001021;
+  --text-light:#5A6872;
+  --border:#D9D5CF;
+
+  --radius-lg:16px;
+  --radius-md:12px;
+  --radius-sm:8px;
+  --shadow:0 10px 25px rgba(0,16,33,.15);
 }
   *{box-sizing:border-box;}
   html{-webkit-text-size-adjust:100%;}
@@ -272,7 +289,7 @@
   }
   .checkbox-item:has(input:checked){
     border-color:var(--lamp-deep);
-    background:#FBF3E4;
+    background:#E7F1F8;
   }
   .checkbox-item input{accent-color:var(--lamp-deep);width:16px;height:16px;flex:none;}
   .other-input{margin-top:10px;}
@@ -312,7 +329,7 @@
     border-radius:var(--radius-md);
     padding:15px;
     cursor:pointer;
-    box-shadow:0 8px 20px rgba(226,163,61,0.35);
+    box-shadow:0 8px 20px rgba(82,153,211,.35);
     transition:transform .12s ease, background .15s ease;
   }
   .btn-save:hover{background:var(--primary-dark);}

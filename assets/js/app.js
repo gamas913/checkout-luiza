@@ -398,14 +398,52 @@
     return out;
   }
 
-  
-document.addEventListener('click',function(e){
-if(e.target&&e.target.id==='export-json'){
-var dados=[];
-for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(STORAGE_PREFIX)===0){dados.push(JSON.parse(localStorage.getItem(k)));}}
-var blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
-var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='historico_checkout.json';a.click();
-}});
+
+  // Exporta arquivos de forma compatível com Android/PWA e desktop.
+  // No celular, abre a folha de compartilhamento para salvar em Arquivos ou Drive.
+  async function exportJsonFile(data, filename){
+    var json=JSON.stringify(data,null,2);
+    var file=new File([json],filename,{type:'application/json'});
+
+    if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+      try{
+        await navigator.share({files:[file],title:filename});
+        return 'shared';
+      }catch(err){
+        if(err && err.name==='AbortError') return 'cancelled';
+        // Se o compartilhamento falhar, tenta o download tradicional abaixo.
+      }
+    }
+
+    var url=URL.createObjectURL(file);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download=filename;
+    a.rel='noopener';
+    a.style.display='none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url);},5000);
+    return 'downloaded';
+  }
+
+  document.addEventListener('click',async function(e){
+    if(e.target&&e.target.id==='export-json'){
+      var dados=[];
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i);
+        if(k&&k.indexOf(STORAGE_PREFIX)===0&&k.indexOf('checkout:draft:')!==0&&k!=='checkout:projects'){
+          try{dados.push(JSON.parse(localStorage.getItem(k)));}catch(err){}
+        }
+      }
+      var result=await exportJsonFile(dados,'historico-checkout-luiza-'+todayStr()+'.json');
+      var status=document.getElementById('backup-status');
+      if(result==='shared') status.textContent='Escolha Arquivos, Drive ou outro local para guardar o histórico.';
+      else if(result==='downloaded') status.textContent='Histórico exportado para os downloads do aparelho.';
+      else status.textContent='Exportação cancelada.';
+    }
+  });
 
 
   // ---------- project catalog, backup and autosave ----------
@@ -461,14 +499,17 @@ var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='h
     }
     return data;
   }
-  function downloadJson(data,filename){
-    var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click();
-    setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
-  }
-  document.getElementById('export-backup').addEventListener('click',function(){
-    downloadJson(buildBackup(),'backup-checkout-luiza-'+todayStr()+'.json');
-    document.getElementById('backup-status').textContent='Backup baixado. Guarde-o no Drive ou em outro local seguro.';
+  document.getElementById('export-backup').addEventListener('click',async function(){
+    var status=document.getElementById('backup-status');
+    status.textContent='Preparando backup...';
+    try{
+      var result=await exportJsonFile(buildBackup(),'backup-checkout-luiza-'+todayStr()+'.json');
+      if(result==='shared') status.textContent='Escolha Arquivos, Drive ou outro local para guardar o backup.';
+      else if(result==='downloaded') status.textContent='Backup salvo nos downloads do aparelho.';
+      else status.textContent='Backup cancelado.';
+    }catch(err){
+      status.textContent='Não foi possível exportar o backup neste aparelho.';
+    }
   });
   document.getElementById('import-backup').addEventListener('change',function(e){
     var file=e.target.files&&e.target.files[0]; if(!file) return;
